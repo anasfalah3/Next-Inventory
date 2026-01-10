@@ -1,3 +1,4 @@
+import { UserButton } from "@stackframe/stack";
 import {BarChart3, Icon, Link, Package, Plus, Settings} from "lucide-react";
 export default function Sidebar({currentPath ="/dashboard"}: {currentPath?: string}) {
 
@@ -27,5 +28,10 @@ export default function Sidebar({currentPath ="/dashboard"}: {currentPath?: stri
                         )
                   })}
             </nav>
+            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-700">
+                  <div className="flex items-center justify-between">
+                        <UserButton showUserInfo/>
+                  </div>
+            </div>
       </div>;
 }
