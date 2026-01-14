@@ -8,9 +8,27 @@ export default async function DashboardPage() {
       const user = await getCurrentUser();
       const userId = user.id;
 
-      const totalProducts = await prisma.product.count({ where: { userId } });
+      const [totalProducts, lowStock, allProducts] = await Promise.all([
+            prisma.product.count({ where: { userId } }),
+            prisma.product.count({
+                  where: {
+                        userId,
+                        lowStockAt: { not: null },
+                        quantity: { lte: 5 },
+                  },
+            }),
+            prisma.product.findMany({
+                  where: { userId },
+                  select: { price: true, quantity: true, createdAt: true },
+            })
+      ]);
 
-      const lowStock = await prisma.product.count({ where: { userId } });
+      const totalValue = allProducts.reduce(
+            (sum, product) => sum + Number(product.price) * Number(product.quantity), 0
+
+      )
+
+
       const recent = await prisma.product.findMany({
             where: { userId },
             orderBy: { createdAt: "desc" },
