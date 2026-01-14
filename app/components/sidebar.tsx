@@ -1,5 +1,6 @@
 import { UserButton } from "@stackframe/stack";
-import {BarChart3, Icon, Link, Package, Plus, Settings} from "lucide-react";
+import {BarChart3, Package, Plus, Settings} from "lucide-react";
+import Link from "next/link";
 export default function Sidebar({currentPath ="/dashboard"}: {currentPath?: string}) {
 
       const navigation = [
@@ -22,8 +23,8 @@ export default function Sidebar({currentPath ="/dashboard"}: {currentPath?: stri
                         const isActive = currentPath === item.href;
                         return (
                               <Link href={item.href} key={key} className={`flex items-center space-x-3 py-2 px-3 rounded-lg ${isActive ? 'bg-purple-100 text-gray-800' : 'text-gray-300 hover:bg-gray-800'} px-3`}>
-                              <IconComponent className="w-5 h-5"/>
-                              <span className="text-sm">{item.name}</span>
+                                    <IconComponent className="w-5 h-5"/>
+                                    <span className="text-sm">{item.name}</span>
                               </Link>
                         )
                   })}
