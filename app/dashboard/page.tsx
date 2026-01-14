@@ -1,25 +1,25 @@
 import { prisma } from "@/lib/prisma";
 import Sidebar from "../components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
+import { TrendingUp } from "lucide-react";
 
-export default async function DashboardPage(){
+export default async function DashboardPage() {
 
       const user = await getCurrentUser();
       const userId = user.id;
 
-      const totalProducts = await prisma.product.count({where:{userId}});
+      const totalProducts = await prisma.product.count({ where: { userId } });
 
-      const lowStock = await prisma.product.count({where:{userId}});
+      const lowStock = await prisma.product.count({ where: { userId } });
       const recent = await prisma.product.findMany({
-            where:{userId},
-            orderBy:{createdAt:"desc"},
-            take:5,
+            where: { userId },
+            orderBy: { createdAt: "desc" },
+            take: 5,
       })
-      console.log({totalProducts, lowStock, recent});
 
       return (
             <div className="min-h-screen bg-gray-50">
-                  <Sidebar currentPath="/dashboard"/>
+                  <Sidebar currentPath="/dashboard" />
                   <main className="ml-64 p-8">
                         {/* Header */}
                         <div className="mb-8">
@@ -32,7 +32,38 @@ export default async function DashboardPage(){
                         </div>
 
 
-                        {/* Key Metrices */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                              {/* Key Metrices */}
+                              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                                    <h2 className="text-lg font-semibold text-gray-900 mb-6">Key Metrices</h2>
+                                    <div className="grid grid-cols-3 gap-6">
+                                          <div className="text-center">
+                                                <div className="text-3xl font-bold text-gray-900">{totalProducts}</div>
+                                                <div className="text-sm text-gray-600">Total Products</div>
+                                                <div className="flex items-center justify-center mt-1">
+                                                      <span className="text-xs text-green-600">+{totalProducts}</span>
+                                                      <TrendingUp className="w-3 h-3 text-green-600 ml-1" />
+                                                </div>
+                                          </div>
+                                          <div className="text-center">
+                                                <div className="text-3xl font-bold text-gray-900">${totalValue}</div>
+                                                <div className="text-sm text-gray-600">Total Value</div>
+                                                <div className="flex items-center justify-center mt-1">
+                                                      <span className="text-xs text-green-600">+${totalValue}</span>
+                                                      <TrendingUp className="w-3 h-3 text-green-600 ml-1" />
+                                                </div>
+                                          </div>
+                                          <div className="text-center">
+                                                <div className="text-3xl font-bold text-gray-900">{lowStock}</div>
+                                                <div className="text-sm text-gray-600">Low Stock</div>
+                                                <div className="flex items-center justify-center mt-1">
+                                                      <span className="text-xs text-green-600">+{totalProducts}</span>
+                                                      <TrendingUp className="w-3 h-3 text-green-600 ml-1" />
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
                   </main>
             </div>
       );
