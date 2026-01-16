@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Sidebar from "../components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import { TrendingUp } from "lucide-react";
+import ProductsChart from "../components/products-chart";
 
 export default async function DashboardPage() {
 
@@ -27,6 +28,29 @@ export default async function DashboardPage() {
             (sum, product) => sum + Number(product.price) * Number(product.quantity), 0
 
       )
+
+      const now = new Date();
+      const weeklyProductData = []
+      for (let i = 11; i >= 0; i--) {
+            const weekStart = new Date(now)
+            weekStart.setDate(weekStart.getDate() - i * 7)
+            weekStart.setHours(0, 0, 0, 0)
+            
+            const weekEnd = new Date(weekStart)
+            weekEnd.setDate(weekEnd.getDate() + 6)
+            weekEnd.setHours(23, 59, 59, 999)
+
+            const weekLabel = `${String(weekStart.getMonth() + 1).padStart(2,"0")}/${String(weekStart.getDate() + 1).padStart(2,"0")}`;
+
+            const weekProducts = allProducts.filter(product => {
+                  const productDate = new Date(product.createdAt);
+                  return productDate >= weekStart && productDate <= weekEnd;
+            })
+
+            weeklyProductData.push({
+                  week:weekProducts.length
+            })
+      }
 
 
       const recent = await prisma.product.findMany({
@@ -81,6 +105,16 @@ export default async function DashboardPage() {
                                           </div>
                                     </div>
                               </div>
+                              {/* Inventory over time */}
+                              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                          <h2 className="text-lg font-semibold text-gray-900">New products per week</h2>
+                                    </div>
+                                    <div className="h-48">
+                                          <ProductsChart data={ } />
+                                    </div>
+                              </div>
+
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
