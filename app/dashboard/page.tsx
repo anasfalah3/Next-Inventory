@@ -29,18 +29,26 @@ export default async function DashboardPage() {
 
       )
 
+      const inStockCount = allProducts.filter((p) => Number(p.quantity) > 5).length
+      const lowStockCount = allProducts.filter((p) => Number(p.quantity) <= 5 && Number(p.quantity) >= 1).length
+      const outOfStockCount = allProducts.filter((p) => Number(p.quantity) === 0).length
+
+      const inStockPercentage = totalProducts > 0 ? Math.round((inStockCount / totalProducts) * 100) : 0;
+      const lowStockPercentage = totalProducts > 0 ? Math.round((lowStockCount / totalProducts) * 100) : 0;
+      const outOfStockPercentage = totalProducts > 0 ? Math.round((outOfStockCount / totalProducts) * 100) : 0;
+
       const now = new Date();
       const weeklyProductData = []
       for (let i = 11; i >= 0; i--) {
             const weekStart = new Date(now)
             weekStart.setDate(weekStart.getDate() - i * 7)
             weekStart.setHours(0, 0, 0, 0)
-            
+
             const weekEnd = new Date(weekStart)
             weekEnd.setDate(weekEnd.getDate() + 6)
             weekEnd.setHours(23, 59, 59, 999)
 
-            const weekLabel = `${String(weekStart.getMonth() + 1).padStart(2,"0")}/${String(weekStart.getDate() + 1).padStart(2,"0")}`;
+            const weekLabel = `${String(weekStart.getMonth() + 1).padStart(2, "0")}/${String(weekStart.getDate() + 1).padStart(2, "0")}`;
 
             const weekProducts = allProducts.filter(product => {
                   const productDate = new Date(product.createdAt);
@@ -48,7 +56,7 @@ export default async function DashboardPage() {
             })
 
             weeklyProductData.push({
-                  week:weekProducts.length
+                  week: weekProducts.length
             })
       }
 
@@ -111,7 +119,7 @@ export default async function DashboardPage() {
                                           <h2 className="text-lg font-semibold text-gray-900">New products per week</h2>
                                     </div>
                                     <div className="h-48">
-                                          <ProductsChart data={ } />
+                                          <ProductsChart data={weeklyProductData} />
                                     </div>
                               </div>
 
@@ -138,6 +146,46 @@ export default async function DashboardPage() {
                                                       </div>
                                                 )
                                           })}
+                                    </div>
+                              </div>
+                              {/* Efficiency */}
+                              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                          <h2 className="text-lg font-semibold text-gray-900">Efficiency</h2>
+                                    </div>
+                                    <div className="flex items-center justify-center">
+                                          <div className="relative w-48 h-48">
+                                                <div className="absolute inset-0 rounded-full border-8 border-pink-600"
+                                                      style={{ clipPath: "polygon(50% 50%,50% 0%, 100% 0%,100% 100%,0% 100%,0% 50%)" }}
+                                                >
+                                                      <div className="absolute inset-0 flex items-center justify-center">
+                                                            <div className="text-center">
+                                                                  <div className="text-2xl font-bold text-gray-900">{inStockPercentage}%</div>
+                                                                  <div className="text-sm text-gray-600">In Stock</div>
+                                                            </div>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                    </div>
+                                    <div className="mt-6 space-y-2">
+                                          <div className="flex items-center justify-between text-sm text-gray-600">
+                                                <div className="flex items-center space-x-2">
+                                                      <div className="w-3 h-3 rounded-full bg-purple-200" />
+                                                      <span>In Stock ({inStockPercentage}%)</span>
+                                                </div>
+                                          </div>
+                                          <div className="flex items-center justify-between text-sm text-gray-600">
+                                                <div className="flex items-center space-x-2">
+                                                      <div className="w-3 h-3 rounded-full bg-purple-600" />
+                                                      <span>In Stock ({lowStockPercentage}%)</span>
+                                                </div>
+                                          </div>
+                                          <div className="flex items-center justify-between text-sm text-gray-600">
+                                                <div className="flex items-center space-x-2">
+                                                      <div className="w-3 h-3 rounded-full bg-gray-200" />
+                                                      <span>In Stock ({outOfStockPercentage}%)</span>
+                                                </div>
+                                          </div>
                                     </div>
                               </div>
                         </div>
